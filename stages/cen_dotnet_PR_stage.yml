@@ -1,0 +1,24 @@
+parameters:
+  - name: stageName
+    type: string
+    default: ''
+  - name: condition
+    type: string
+    default: ''
+  - name: dependsOn
+    type: object
+    default: []
+  - name: DsoDevSecOps
+    type: string
+    default: ''
+  - name: sonarQubeRunAnalysis
+    type: string
+    default: ''
+
+stages:
+ - stage: ${{ parameters.stageName }}  # Define a stage based on input parameter 'stageName'
+   condition: ${{ parameters.condition }}  # Specify a condition for the stage based on input parameter 'condition'
+   jobs:
+    - template: ../jobs/cen_test_dotnet_app.yml  # Use a job template to test a .NET application with specified configurations
+    
+   

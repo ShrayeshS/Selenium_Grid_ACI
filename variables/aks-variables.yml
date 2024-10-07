@@ -1,0 +1,5 @@
+variables:
+  AKS_RG: DSOKITTest #AKS Resource Group
+  K8S_CLUSTER: K8S_Agent # AKS Cluster Name
+  SUBSCRIPTION_SC: DXO_Service_Connection #Service Connection to the Subscription containg the AKS
+  ACR_SC: Docker-ADO connection # Service Connection to the ACR

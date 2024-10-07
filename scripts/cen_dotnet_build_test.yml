@@ -1,0 +1,7 @@
+steps:
+    - script: |
+        #!/bin/bash
+        cd $(Build.SourcesDirectory)/$(solution)
+        dotnet build --no-incremental --verbosity d --configuration $(buildConfiguration)
+        cd $(Build.SourcesDirectory)/$(unitTest)
+        dotnet-coverage collect "dotnet test" -f xml -o "$(Build.SourcesDirectory)/CodeCoverage/coverage.xml"

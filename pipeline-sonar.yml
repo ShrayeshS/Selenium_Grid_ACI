@@ -1,0 +1,86 @@
+trigger: none
+#trigger:
+#  branches:
+#    include:
+#      - main
+#  paths:
+#    include:
+#      - '*'
+
+#pr: 
+#  branches:
+#    include:
+#     - '*'
+pool:
+  name: 'SonarQube Integration Agent Pool'
+
+variables:
+  - template: variables/application-variables.yml
+  - template: variables/acr-variables.yml
+  - template: variables/aks-variables.yml
+  - template: variables/sonarQube-variables.yml
+
+
+steps:
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'ARGOCD_CONNECTION-dxo' # Service connection for the Azure subscription containing the Azure Key Vault instance
+    KeyVaultName: 'DXOKeyVault' # Name of the Azure Key Vault instance
+    SecretsFilter: 'TENANTID, AZCLIUNAME, AZCLIPWD, SUBSCRIPTION, SMTP-USERNAME, SMTP-PASSWORD' # The secrets that need to be downloaded. '*' indicates all secrets
+    RunAsPreJob: false # Runs the task before the job execution begins. Exposes secrets to all tasks in the job, not just tasks that follow this one.
+
+- task : SonarQubePrepare@5                # Prepare SonarQube analysis configuration
+  inputs :
+    SonarQube : 'My Sonaqube connection'     # Specify the SonarQube connection to use
+    scannerMode : 'CLI'                  # Set the scanner mode to MSBuild
+    projectName : '$(DSO-DevSecOps)'         # Define the project name for SonarQube analysis
+    cliProjectKey : '$(DSO-DevSecOps)'          # Set the project key for identifying the project in SonarQube
+    configMode : 'manual'                    # Use manual configuration mode
+    extraProperties: |
+      sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/CodeCoverage/coverage.xml  
+
+#- script: |
+#    dotnet clean $(Build.SourcesDirectory)/calculator --configuration $(buildConfiguration)
+
+#- task: DotNetCoreCLI@2                                     # Use DotNetCoreCLI task to build a .NET application
+#  displayName: 'Build the dotnet application'                # Display name for the build task
+#  inputs:
+#    command: 'build'                                         # Specify the build command
+#    projects: '**/$(project)/*.csproj'                       # Build all .csproj files in the specified project directory
+#    arguments: '--configuration $(buildConfiguration) --verbosity quiet'     # Define build configuration and set verbosity level to quiet
+
+#- task: DotNetCoreCLI@2                          # Use DotNetCoreCLI task to run tests with OpenCover for code coverage
+#  displayName: 'Dotnet Test - OpenCover'          # Display name for running tests with OpenCover
+#  inputs:
+#    command: 'test'                                # Specify the test command
+#    projects: '$(Build.SourcesDirectory)/**/$(projectTest)/*.csproj'         # Test all .csproj files in the specified project test directory
+#    arguments: '--configuration $(buildConfiguration) --verbosity d --collect "Code Coverage"'# Define test configuration including collecting XPlat Code Coverage in OpenCover format and storing results
+    #workingDirectory: '/home/azureuser/myagent/_work/2/s'
+    #publishTestResults: false  
+
+#- script: |
+#    dotnet tool install -g dotnet-reportgenerator-globaltool
+#    reportgenerator "-reports:$(Build.SourcesDirectory)/coverage.opencover.xml" "-targetdir:$(Build.SourcesDirectory)/CodeCoverage" "-reporttypes:HtmlInline_AzurePipelines;Cobertura"
+
+- script: |
+     #!/bin/bash
+     cd $(Build.SourcesDirectory)/$(solution)
+     dotnet build --no-incremental --verbosity d --configuration $(buildConfiguration)
+     cd $(Build.SourcesDirectory)/$(unitTest)
+     dotnet-coverage collect "dotnet test" -f xml -o "$(Build.SourcesDirectory)/CodeCoverage/coverage.xml"
+
+#- task: PublishCodeCoverageResults@2
+#  inputs:
+#    codeCoverageTool: Cobertura
+#    summaryFileLocation: '$(Build.SourcesDirectory)/CodeCoverage/Cobertura.xml'
+#    reportDirectory: '$(Build.SourcesDirectory)/CodeCoverage'
+
+- task : SonarQubeAnalyze@5             # Execute SonarQube analysis task
+  inputs:
+    jdkversion: 'JAVA_HOME_11_X64'       # Specify the JDK version to use for the analysis
+
+- task: SonarQubePublish@5         # Publish SonarQube analysis results
+  inputs:  
+    pollingTimeoutSec : 300        # Set the polling timeout in seconds for publishing SonarQube analysis results
+
+

@@ -1,0 +1,5 @@
+variables:
+  ACRNAME: dsocontainerregistry    # Define the name of the Azure Container Registry
+  ACRRG: DSOKITTest               # Set the resource group for the Azure Container Registry
+  REPO_NAME: dotnet             # Specify the repository name for the project
+

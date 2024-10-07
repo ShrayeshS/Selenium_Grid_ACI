@@ -1,0 +1,18 @@
+steps:
+  - script: |
+      sudo apt-get update                                                      # Update package lists on the system
+      sudo apt-get install -y libxml2-utils                                    # Install libxml2-utils package for XML processing
+
+      coverageThreshold=$(testCoverage)                                        # This variable is set in the pipeline
+      coverageXmlPath=$(Agent.TempDirectory)/**/coverage.cobertura.xml             # Define path to the Cobertura XML coverage report
+      lineRate=$(xmllint --xpath "string(/coverage/@line-rate)" $coverageXmlPath)        # Extract line rate from the Cobertura XML report
+      lineRatePercentage=$(awk -v rate=$lineRate 'BEGIN { printf "%.2f", rate * 100 }')     # Calculate line rate percentage
+
+      if (( $(echo "$lineRatePercentage < $coverageThreshold" | bc -l) )); then
+        echo "Expected Code coverage is $(testCoverage)%. Actual code coverage is ($lineRatePercentage%). Failing the pipeline."
+        exit 1 # Fail the pipeline
+      elif (( $(echo "$lineRatePercentage > $coverageThreshold" | bc -l) )); then
+        echo "Expected Code coverage is $(testCoverage)%. Actual code coverage is ($lineRatePercentage%). Continuing"
+      fi
+    displayName: 'Check and fail based on Code Coverage'
+

@@ -1,0 +1,20 @@
+steps:
+  - task: DotNetCoreCLI@2                          # Use DotNetCoreCLI task to run tests with OpenCover for code coverage
+    displayName: 'Dotnet Test - OpenCover'          # Display name for running tests with OpenCover
+    inputs:
+      command: 'test'                                # Specify the test command
+      projects: '**/$(projectTest)/*.csproj'         # Test all .csproj files in the specified project test directory
+      arguments: '--configuration $(buildConfiguration) --collect "XPlat Code Coverage;Format=opencover" -- RunSettings.RunConfiguration.ResultsDirectory=$(Agent.TempDirectory)' # Define test configuration including collecting XPlat Code Coverage in OpenCover format and storing results
+      publishTestResults: false                                            # Disable publishing of test results
+  
+
+  - task: DotNetCoreCLI@2                                  # Use DotNetCoreCLI task to run tests with Cobertura for code coverage
+    displayName: 'Dotnet Test - Cobertura'                 # Display name for running tests with Cobertura
+    inputs:
+      command: 'test'                                       # Specify the test command
+      projects: '**/$(projectTest)/*.csproj'                 # Test all .csproj files in the specified project test directory
+      arguments: '--configuration $(buildConfiguration) --collect:"XPlat Code Coverage" --results-directory $(Build.SourcesDirectory)'  # Define test configuration including collecting XPlat Code Coverage and storing results  
+      publishTestResults: false                              # Disable publishing of test results
+
+
+

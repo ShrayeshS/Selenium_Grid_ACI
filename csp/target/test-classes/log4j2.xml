@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+	<Properties>
+		<Property name="baseDir">./logs</Property>
+		<Property name="errorLog">log_error</Property>
+		<Property name="allLog">log_all</Property>
+	</Properties>
+
+	<Appenders>
+		<RollingFile name="RollingFileError" fileName="${baseDir}/${errorLog}.log"
+			filePattern="${baseDir}/${errorLog}-%d{yyyy-MM-dd}-%i.log" append="true">
+			<PatternLayout>
+				<Pattern>%d{ISO8601} %-5p [%t] (%F:%L) - %m%n</Pattern>
+			</PatternLayout>
+			
+			<Policies>
+				<SizeBasedTriggeringPolicy size="200 KB" />
+			</Policies>
+			<DefaultRolloverStrategy>
+				<Delete basePath="${baseDir}" maxDepth="1">
+					<IfFileName glob="log_*.log" />
+          <IfLastModified age="30d" />
+	</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+
+		<RollingFile name="RollingFileAll" fileName="${baseDir}/${allLog}.log"
+			filePattern="${baseDir}/${allLog}-%d{yyyy-MM-dd}-%i.log" append="true">
+			<PatternLayout>
+				<Pattern>%d{ISO8601} %-5p [%t] (%F:%L) - %m%n</Pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="200 KB" />
+			</Policies>
+			<DefaultRolloverStrategy>
+				<Delete basePath="${baseDir}" maxDepth="1">
+					<IfFileName glob="log_*.log" />				
+           <IfLastModified age="30d" />
+ 	</Delete>
+			</DefaultRolloverStrategy>
+		</RollingFile>
+
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{ISO8601} %-5p [%t] (%F:%L) - %m%n" />
+		</Console>
+
+
+	</Appenders>
+	<loggers>
+		<root level="trace">
+			<appender-ref ref="Console" level="off" />
+			<appender-ref ref="RollingFileError" level="error" />
+			<appender-ref ref="RollingFileAll" level="all" />
+		</root>
+
+	</loggers>
+</Configuration>

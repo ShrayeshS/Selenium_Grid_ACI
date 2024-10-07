@@ -1,0 +1,25 @@
+{
+  "@type": "com.github.mkolisnyk.cucumber.reporting.types.consolidated.ConsolidatedReportBatch", 
+  "models": [
+    {
+      "items": [
+        {
+          "path": "target/NewReports/CSP-feature-overview.html", 
+          "title": "Test Results Overview"
+        },
+        {
+          "path": "target/NewReports/CSP-agg-test-results.html", 
+          "title": "Detailed Test Results"
+        },
+        {
+          "path": "target/NewReports/CSP-coverage.html", 
+          "title": "Test Coverage Report"
+        }
+        ], 
+      "reportSuffix": "Test Reports",
+      "title": "Overall Results", 
+      "useTableOfContents": true
+    }
+    
+  ]
+}

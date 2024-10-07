@@ -1,0 +1,6 @@
+steps:
+  - script: |
+      curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash    # Download and install Azure CLI on the agent machine
+    displayName: 'Install Azure CLI'
+
+

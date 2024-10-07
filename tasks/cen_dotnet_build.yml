@@ -1,0 +1,9 @@
+steps:
+  - task: DotNetCoreCLI@2                                     # Use DotNetCoreCLI task to build a .NET application
+    displayName: 'Build the dotnet application'                # Display name for the build task
+    inputs:
+      command: 'build'                                         # Specify the build command
+      projects: '**/$(project)/*.csproj'                       # Build all .csproj files in the specified project directory
+      arguments: '--configuration $(buildConfiguration) --verbosity quiet'     # Define build configuration and set verbosity level to quiet
+
+

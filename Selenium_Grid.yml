@@ -1,0 +1,51 @@
+trigger:
+- none
+
+pool:
+  name: 'New SonarQube Integration Agent Pool'
+
+steps:
+- script: |
+    # Install Docker Compose if not already installed
+    if ! command -v docker-compose &> /dev/null
+    then
+      echo "Installing Docker Compose..."
+      sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      sudo chmod +x /usr/local/bin/docker-compose
+    fi
+    # Pull Selenium images
+    sudo docker pull selenium/node-chrome:4.21.0-20240522
+    sudo docker pull selenium/node-firefox:4.21.0-20240522
+    sudo docker pull selenium/hub:4.21.0-20240522
+  displayName: 'Install Docker Compose and Pull Selenium Images'
+
+- script: |
+    docker-compose -f docker-compose.yml up -d
+  displayName: 'Start Selenium Grid Containers'
+
+# Install JDK 8 using the Java Tool Installer task
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '8'
+    jdkArchitectureOption: 'x64'
+    jdkFile: 'jdk-8uXXX-linux-x64.tar.gz' # Replace 'XXX' with the update number
+    jdkDownloadUrl: 'https://path/to/your/jdk8/download' # Replace with the URL to download JDK 8
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    jdkDestinationDirectory: '$(Agent.ToolsDirectory)/jdk8'
+
+# Add a Maven task to run the test cases
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'csp/pom.xml'
+    goals: 'test'
+    options: '-Dmaven.test.failure.ignore=true'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    jdkVersionOption: '1.8'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
+  displayName: 'Run Maven Selenium Test Cases'

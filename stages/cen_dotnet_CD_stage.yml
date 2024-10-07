@@ -1,0 +1,30 @@
+parameters:
+  - name: stageName
+    type: string
+    default: ''
+  - name: condition
+    type: string
+    default: ''
+  - name: dependsOn
+    type: object
+    default: []
+  - name: DsoDevSecOps
+    type: string
+    default: ''
+  - name: sonarQubeRunAnalysis
+    type: string
+    default: ''
+
+stages:
+ - stage: ${{ parameters.stageName }}              # Define a stage based on input parameter 'stageName'
+   condition: ${{ parameters.condition }}          # Specify a condition for the stage based on input parameter 'condition'
+   dependsOn: ${{ parameters.dependsOn }}          # Set dependencies for the stage based on input parameter 'dependsOn'
+   jobs:                                                   # Use a job template to deploy to AKS with specified parameters from variables
+
+    - template: ../jobs/cen_deploy_to_aks.yml       
+      parameters:
+        AKS_RG:  $(AKS_RG)                        # Pass AKS Resource Group as a parameter to the job template 
+        K8S_CLUSTER:  $(K8S_CLUSTER)               # Pass Kubernetes Cluster Name as a parameter to the job template 
+        SUBSCRIPTION_SC:  $(SUBSCRIPTION_SC)       # Pass Subscription Service Connection as a parameter to the job template
+        ACR_SC:  $(ACR_SC)                         # Pass Azure Container Registry Service Connection as a parameter to the job template
+

@@ -1,0 +1,77 @@
+# This job template is used to build and test a dotnet application.
+# It uses Cobertura framework for code coverage which gets published to Azure Pipelines.
+# Additionally it uses a script to verify the code coverage, on basis of which the pipeline would proceed.
+
+
+
+jobs:
+  - job:
+    steps:
+      - template: ../tasks/cen_keyVault_connect.yml
+      #- template: ../tasks/cen_install_dotnetSDK.yml
+      - template: ../scripts/cen_display_dotnet_ver.yml
+      - template: ../tasks/cen_SonarQube_Prepare_DotNet.yml
+      - script: echo $(SONARQUBE_SCANNER_PARAMS)
+      - script: |
+          params=$(echo $SONARQUBE_SCANNER_PARAMS | sed 's/"sonar.pullrequest.branch":"[^ ]*",//')
+          echo $params
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+      - script: |
+          params=$(echo $SONARQUBE_SCANNER_PARAMS | sed 's/"sonar.pullrequest.key":"[^ ]*",//')
+          echo $params
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+      - script: |
+          params=$(echo $SONARQUBE_SCANNER_PARAMS | sed 's/"sonar.pullrequest.base":"[^ ]*",//')
+          echo $params
+          echo "##vso[task.setvariable variable=SONARQUBE_SCANNER_PARAMS]$params"
+      - script: echo $(SONARQUBE_SCANNER_PARAMS)
+      - template: ../scripts/cen_dotnet_build_test.yml
+      #- template: ../tasks/cen_dotnet_build.yml
+      #- template: ../tasks/cen_dotnet_test.yml
+      #- template: ../tasks/cen_publish_code_coverage.yml
+      #- template: ../scripts/cen_check_code_coverage.yml
+      - template: ../tasks/cen_SonarQube_Analyse.yml
+      - template: ../tasks/cen_SonarQube_Publish.yml
+      #- script: |
+      #    sleep 5m
+      #- template: ../scripts/cen_QualityGate_Status.yml
+      
+      
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

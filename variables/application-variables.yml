@@ -1,0 +1,4 @@
+variables:
+  buildConfiguration: Release
+  solution: calculator #The dotnet project that holds the application code
+  unitTest: calculator/CalculatorTest # The dotnet project containing all unit test cases

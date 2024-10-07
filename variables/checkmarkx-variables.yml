@@ -1,0 +1,4 @@
+variables:
+  projectName: 'DSO_Checkmarx'                    # Define the project name for the Checkmarx integration
+  CheckmarxService: 'Checkmarx_Integration-dxo'     # Specify the Checkmarx service used for integration
+  dependencyServerURL: 'Checkmarx_Integration_SCA-dxo'  # Set the URL for the Checkmarx integration server

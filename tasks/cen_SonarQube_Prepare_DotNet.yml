@@ -1,0 +1,26 @@
+steps:
+  - task : SonarQubePrepare@5                # Prepare SonarQube analysis configuration
+    inputs :
+      SonarQube : 'My Sonaqube connection'     # Specify the SonarQube connection to use
+      scannerMode : 'CLI'                  # Set the scanner mode to MSBuild
+      projectName : '$(DSO-DevSecOps)'         # Define the project name for SonarQube analysis
+      cliProjectKey : '$(DSO-DevSecOps)'          # Set the project key for identifying the project in SonarQube
+      configMode : 'manual'                    # Use manual configuration mode
+      extraProperties: |
+        sonar.cs.vscoveragexml.reportsPaths=$(Build.SourcesDirectory)/CodeCoverage/coverage.xml  
+        sonar.verbose=true
+        
+  #- task : SonarQubePrepare@5 
+  #  inputs :
+  #    SonarQube : 'My Sonaqube connection'
+  #    scannerMode : 'CLI'
+  #    configMode : 'file'
+  #    configFile : '$(Build.SourcesDirectory)/sonar-project.properties'
+  #    cliProjectKey : '$(DSO-DevSecOps)'
+  #    cliProjectName : '$(DSO-DevSecOps)'
+  #    extraProperties: |
+  #      sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/**/coverage.opencover.xml
+
+
+
+

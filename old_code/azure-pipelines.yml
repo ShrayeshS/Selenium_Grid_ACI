@@ -1,0 +1,21 @@
+trigger: 
+- main
+
+variables:
+  - template: variables/variables_dotnet.yml
+
+steps:
+- template: tasks/cen_dotnet_build.yml
+
+- script: cd calculatorTests && dotnet test
+  displayName: 'Test dotnet application'
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: 'DXO_Service_Connection'
+    appType: 'webAppLinux'
+    appName: 'DXO-WebApp'
+    package: '$(System.DefaultWorkingDirectory)/**/*.zip'

@@ -1,0 +1,10 @@
+steps:
+  - task: PublishCodeCoverageResults@1                 # Use PublishCodeCoverageResults task to publish code coverage results
+    displayName: 'Publish Code Coverage Results'         # Display name for publishing code coverage results
+    inputs:     
+      codeCoverageTool: 'Cobertura'                               # Specify Cobertura as the code coverage tool used for the analysis
+      summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'   # Define the location of the Cobertura coverage summary file to publish
+      
+#codeCoverageTool: 'Cobertura'
+#summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+

@@ -1,0 +1,7 @@
+steps:
+  - task: UseDotNet@2                   # Use UseDotNet task to install a specific version of the .NET SDK
+    displayName: 'Install .NET SDK'      # Display name for installing the .NET SDK
+    inputs:
+      packageType: sdk                  # Specify that the package type being installed is an SDK
+      version: 8.x                       # Install version 8.x of the .NET SDK
+

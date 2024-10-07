@@ -1,0 +1,21 @@
+# This Job is to build a DockerFile and push the same to ACR.
+# Internally it calls multiple templates to -
+# 1. Connect to Azure Key Vault to download any secrets
+# 2. Install Azure CLI and Kubectl
+# 3. Build and Push the Image
+
+
+
+jobs:
+  - job:
+    steps:
+      - template: ../tasks/cen_keyVault_connect.yml
+      #- template: ../scripts/cen_install_azure_cli.yml
+      - template: ../scripts/cen_install_kubectl.yml
+      - template: ../scripts/cen_dotnet_build_test.yml
+      - template: ../scripts/cen_docker_build_push.yml
+      #- template: ../tasks/cen_checkmarkx.yml
+
+
+
+

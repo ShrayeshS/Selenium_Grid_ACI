@@ -1,0 +1,77 @@
+parameters:
+  - name: AKS_RG               # Resource group name for the AKS cluster
+  - name: K8S_CLUSTER          # Name of the Kubernetes cluster
+  - name: SUBSCRIPTION_SC      # Subscription ID for Azure services
+  - name: ACR_SC               # Name of the Azure Container Registry
+
+
+
+jobs:
+  - job: Deploy
+    steps:
+      - template: ../tasks/cen_keyVault_connect.yml          # Include a template for connecting to Key Vault
+      #- template: ../scripts/cen_install_azure_cli.yml
+      - template: ../scripts/cen_install_kubectl.yml         # Template to install kubectl
+
+      - script: |
+          sudo az login --service-principal -u $(AZCLIUNAME) -p $(AZCLIPWD) --tenant $(TENANTID)
+          sudo az account set --subscription $(SUBSCRIPTION)
+          sudo az acr login --name $(ACRNAME) --resource-group $(ACRRG)
+              # Retrieve ACR login server and resource group using Azure CLI commands
+          sudo az aks get-credentials --resource-group ${{ parameters.AKS_RG }} --name ${{ parameters.K8S_CLUSTER }}
+               # Get AKS credentials and set up kubectl context for the K8S_Agent cluster
+
+      - task: Kubernetes@1
+        displayName: 'Deploy to AKS'
+        inputs:
+          connectionType: 'Azure Resource Manager'
+          azureSubscriptionEndpoint: '${{ parameters.SUBSCRIPTION_SC }}'
+          azureContainerRegistry: '${{ parameters.ACR_SC }}'
+          azureResourceGroup: '${{ parameters.AKS_RG }}'
+          kubernetesCluster: '${{ parameters.K8S_CLUSTER }}'
+          command: 'apply'
+          arguments: '-f $(Build.SourcesDirectory)/k8s.yml' # Path to your Kubernetes deployment file
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

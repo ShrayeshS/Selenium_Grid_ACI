@@ -1,0 +1,5 @@
+variables:
+  DSO-DevSecOps: DSO-DevSecOps        # Define a variable for DSO DevSecOps
+  SONAR_TOKEN: sqp_0519d22ca3fc13984fc765996afd110fef005fde # Set the SonarQube access token
+  DXO_SonarQube: https://sonarqube.cencora.com/     # Specify the SonarQube server URL
+  SONAR_PATH: /home/azureuser/myagent/_work/2/s/calculator/CalculatorTest/coverage.xml

@@ -1,0 +1,88 @@
+trigger:
+- none
+
+pool:
+  name: 'New SonarQube Integration Agent Pool'
+
+steps:
+- task: AzureKeyVault@2
+  inputs:
+    azureSubscription: 'ARGOCD_CONNECTION-dxo'
+    KeyVaultName: 'DXOKeyVault'
+    SecretsFilter: 'TENANTID, AZCLIUNAME, AZCLIPWD, SUBSCRIPTION'
+    RunAsPreJob: false
+
+- script: |
+    curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+  displayName: 'Install Azure CLI'
+
+- script: |
+    az login --service-principal -u $(AZCLIUNAME) -p $(AZCLIPWD) --tenant $(TENANTID)
+    az account set --subscription $(SUBSCRIPTION)
+    
+    # Create Selenium Hub
+    az container delete -g DXO_Integration_RG --name selenium-hub -y
+    az container create -g DXO_Integration_RG --name selenium-hub --image selenium/hub:4.21.0-20240522 --cpu 1 --memory 1.5 \
+      --ports 4442 4443 80 \
+      --environment-variables SE_EVENT_BUS_ADDRESS="http://selenium-hub:4442/wd/hub"
+
+    # Create Selenium Chrome Node
+    az container delete -g DXO_Integration_RG --name selenium-chrome-node -y
+    az container create -g DXO_Integration_RG --name selenium-chrome-node --image selenium/node-chrome:4.21.0-20240522 \
+        --cpu 1 \
+        --memory 1 \
+        --restart-policy Never \
+        --environment-variables SE_EVENT_BUS_ADDRESS="http://selenium-hub:4442/wd/hub" \
+        --environment-variables SE_EVENT_BUS_PUBLISH_PORT=4442 \
+        --environment-variables SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+    # Create Selenium Firefox Node
+    az container delete -g DXO_Integration_RG --name selenium-firefox-node -y
+    az container create -g DXO_Integration_RG --name selenium-firefox-node --image selenium/node-firefox:4.21.0-20240522 \
+        --cpu 1 \
+        --memory 1 \
+        --restart-policy Never \
+        --environment-variables SE_EVENT_BUS_ADDRESS="http://selenium-hub:4442/wd/hub" \
+        --environment-variables SE_EVENT_BUS_PUBLISH_PORT=4442 \
+        --environment-variables SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+    # Create Selenium Edge Node
+    az container delete -g DXO_Integration_RG --name selenium-edge-node -y
+    az container create -g DXO_Integration_RG --name selenium-edge-node --image selenium/node-edge:4.21.0-20240522 \
+        --cpu 1 \
+        --memory 1 \
+        --os-type Linux \
+        --restart-policy Never \
+        --environment-variables SE_EVENT_BUS_ADDRESS="http://selenium-hub:4442/wd/hub" \
+        --environment-variables SE_EVENT_BUS_PUBLISH_PORT=4442 \
+        --environment-variables SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+
+  displayName: 'Deploy Selenium Grid to Azure Container Instances'
+
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y openjdk-17-jdk
+    echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" | sudo tee -a /etc/environment
+    source /etc/environment
+    sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+    sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+  displayName: 'Install JDK 17 and set JAVA_HOME'
+
+- script: |
+    sudo apt-get install -y maven
+    mvn -version
+  displayName: 'Install Maven and check version'
+
+- script: |
+    # Debugging
+    echo "Current directory: $(pwd)"
+    ls -la $(Build.SourcesDirectory)
+
+    # Run Selenium UI tests
+    cd $(Build.SourcesDirectory)/csp  # Navigate to the src directory where pom.xml is located
+    if [ ! -f $(Build.SourcesDirectory)/csp/pom.xml ]; then
+      echo "POM file not found!"
+      exit 1
+    fi
+    mvn clean test -f pom.xml -Dtest=LoginPage_StepDef -DfailIfNoTests=false
+  displayName: 'Run Selenium UI Tests'

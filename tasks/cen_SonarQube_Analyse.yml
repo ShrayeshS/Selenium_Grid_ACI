@@ -1,0 +1,4 @@
+steps:
+  - task : SonarQubeAnalyze@5             # Execute SonarQube analysis task
+    inputs:
+      jdkversion: 'JAVA_HOME_11_X64'       # Specify the JDK version to use for the analysis

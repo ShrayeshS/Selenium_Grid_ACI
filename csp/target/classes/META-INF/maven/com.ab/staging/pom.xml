@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.ab</groupId>
+	<artifactId>staging</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<repositories>
+		<repository>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-epam-reportportal</id>
+			<name>bintray</name>
+			<url>https://dl.bintray.com/epam/reportportal</url>
+		</repository>
+	</repositories>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!--Added for Jenkins Migration-->
+		<!--<cucumber.filter.tags>@BVT</cucumber.filter.tags>-->
+		<Env>STG</Env>
+		<Browser>chrome</Browser>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.version>3.8.1</maven.compiler.version>
+		<!--<maven.compiler.version>3.8.1</maven.compiler.version>-->
+		<maven.surefire.version>3.0.0-M5</maven.surefire.version>
+		<!--Added for Jenkins Migration-->
+		<io.cucumber.version>7.12.1</io.cucumber.version>
+		<selenium.version>4.11.0</selenium.version>
+		<testng.version>7.3.0</testng.version>
+		<log4j.version>2.15.0</log4j.version>
+		<!--Added for Jenkins Migration-->
+		<junit.jupiter.version>5.10.0</junit.jupiter.version>
+		<!--Removing for Jenkins Migration-->
+		<!--<webdrivermanager.version>4.0.0</webdrivermanager.version>-->
+		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<!--Removing for Jenkins Migration-->
+		<!--<mkolisnyk.version>1.3.5</mkolisnyk.version>-->
+		<com.google.guava>31.0.1-jre</com.google.guava>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${com.google.guava}</version>
+		</dependency>
+		<!--Removing for new Jenkins Migration-->
+		<!-- https://mvnrepository.com/artifact/com.github.mkolisnyk/cucumber-report-generator -->
+		<!--<dependency>
+			<groupId>com.github.mkolisnyk</groupId>
+			<artifactId>cucumber-report-generator</artifactId>
+			<version>${mkolisnyk.version}</version>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/com.github.mkolisnyk/cucumber-reports-->
+		<!--<dependency>
+			<groupId>com.github.mkolisnyk</groupId>
+			<artifactId>cucumber-reports</artifactId>
+			<version>${mkolisnyk.version}</version>
+			<type>pom</type>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/com.github.mkolisnyk/cucumber-runner-->
+		<!--<dependency>
+			<groupId>com.github.mkolisnyk</groupId>
+			<artifactId>cucumber-runner</artifactId>
+			<version>${mkolisnyk.version}</version>
+		</dependency>-->
+		<!-- Removing for new Jenkins Migration-->
+		<!-- https://mvnrepository.com/artifact/com.vimalselvam/cucumber-extentsreport 
+		<dependency>
+			<groupId>com.vimalselvam</groupId>
+			<artifactId>cucumber-extentsreport</artifactId>
+			<version>3.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>3.1.1</version>
+		</dependency>-->
+		<dependency>
+			<groupId>com.epam.reportportal</groupId>
+			<artifactId>agent-java-junit</artifactId>
+			<version>5.1.3</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.epam.reportportal/agent-java-cucumber6 -->
+		<dependency>
+			<groupId>com.epam.reportportal</groupId>
+			<artifactId>agent-java-cucumber6</artifactId>
+			<version>5.2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.epam.reportportal</groupId>
+			<artifactId>agent-java-cucumber</artifactId>
+			<version>5.0.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>4.1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.16</version>
+		</dependency>
+		<!-- logger -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.epam.reportportal</groupId>
+			<artifactId>logger-java-logback</artifactId>
+			<version>5.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
+		<!-- logger -->
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>4.3.3</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>
+		<!-- no longer needed with Selenium 4.8 -->
+		<!--<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>${selenium.version}</version>
+		</dependency>-->
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>${testng.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!--Removed with new Jenkins Integration-->
+		<!--<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-java8</artifactId>
+			<version>1.2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>1.2.5</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>1.2.5</version>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/info.cukes/cucumber-picocontainer-->
+		<!--<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-picocontainer</artifactId>
+			<version>1.2.5</version>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-core</artifactId>
+			<version>1.2.5</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-jvm</artifactId>
+			<version>1.2.5</version>
+			<type>pom</type>
+		</dependency>-->
+		<!-- Added as part of new Jenkins Migration-->
+		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-java -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${io.cucumber.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${io.cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-core -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>cucumber-core</artifactId>
+			<version>${io.cucumber.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.cucumber/gherkin -->
+		<dependency>
+			<groupId>io.cucumber</groupId>
+			<artifactId>gherkin</artifactId>
+			<version>26.1.0</version>
+		</dependency>
+		<!-- Added as part of new Jenkins Migration-->
+		<!-- https://mvnrepository.com/artifact/tech.grasshopper/extentreports-cucumber7-adapter -->
+		<dependency>
+			<groupId>tech.grasshopper</groupId>
+			<artifactId>extentreports-cucumber7-adapter</artifactId>
+			<version>1.14.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.aventstack/extentreports -->
+		<dependency>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>5.1.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
+		<dependency>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.30</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/tech.grasshopper/extent-pdf-report 
+		<dependency>
+    		<groupId>tech.grasshopper</groupId>
+    		<artifactId>extent-pdf-report</artifactId>
+    		<version>2.12.0</version>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/tech.grasshopper/htmlextentreporter 
+		<dependency>
+    		<groupId>tech.grasshopper</groupId>
+    		<artifactId>htmlextentreporter</artifactId>
+    		<version>1.1.0</version>
+		</dependency>-->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>${log4j.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven</groupId>
+			<artifactId>maven-plugin-api</artifactId>
+			<version>3.6.3</version>
+		</dependency>
+		<!--Removing as part of new Jenkins Migration-->
+		<!--<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>${webdrivermanager.version}</version>
+		</dependency>-->
+		<!--<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.1</version>
+			<scope>test</scope>
+		</dependency>-->
+ 		<dependency>
+			<groupId>com.github.temyers</groupId>
+			<artifactId>cucumber-jvm-parallel-plugin</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+		<!-- Upgraded as part of new Jenkins Migration-->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.28</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-clean-plugin</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.3</version>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+		<!-- Added with new Jenkins Migration-->
+		<!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Removed as part of new Jenkins Migration-->
+		<!-- https://mvnrepository.com/artifact/junit/junit-->
+		<!--<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.13.2</version>
+			<scope>test</scope>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
+		<dependency>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.7.1</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.4.1-SNAPSHOT</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<!--<version>3.11.0</version>-->
+				<configuration>
+					<source>17</source>
+					<target>17</target>
+					<!-- <release>${java.version}</release>-->
+					<!-- <compilerArgs>- -enable-preview</compilerArgs> -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>screenshots</directory>
+							<includes>
+								<include>**</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven.surefire.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.surefire</groupId>
+						<artifactId>surefire-junit47</artifactId>
+						<version>3.0.0-M5</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+					<!-- https: <parallel>methods</parallel> -->
+					<!-- https: <threadCount>10</threadCount> 
+					<includes>
+						<include>
+							<exclude>**/*Testrunner.java </exclude>
+						</include>
+					</includes>
+					-->
+					<systemPropertyVariables>
+						<env>${Env}</env>
+						<!--Added for Jenkins Migration-->
+						<cucumber.filter.tags>${cucumber.filter.tags}</cucumber.filter.tags> 
+						<!--suppress UnresolvedMavenProperty -->
+						<browser>${Browser}</browser>
+						<buildDirectory>${project.build.directory}</buildDirectory>
+						<extent.reporter.spark.start>true</extent.reporter.spark.start>
+						<extent.reporter.spark.out>target/extent-reports/SparkReport/Spark.html</extent.reporter.spark.out>
+					</systemPropertyVariables>
+				</configuration>
+			</plugin>
+			<!--AssertThat BDD plugin definition start-->
+			<plugin>
+				<groupId>com.assertthat.plugins</groupId>
+				<artifactId>assertthat-bdd-maven-plugin</artifactId>
+				<version>1.6.2</version>
+				<configuration>
+					<!--projectId>10598</projectId-->
+					<projectId>10598</projectId>
+					<!--Optional can be supplied as environment variable ASSERTTHAT_ACCESS_KEY -->
+					<accessKey>65877cc509b483989af4259da43c4b63be629206877710c17d595ed28d4c47b1</accessKey>
+					<!--Optional can be supplied as environment variable ASSERTTHAT_SECRET_KEY -->
+					<secretKey>9116d53ab014354750968ef490a8382eaccd9201c4cd08f8a9b97eb7c308b372</secretKey>
+				</configuration>
+				<executions>
+					<execution>
+						<configuration>
+							<!--Optional - default ./features-->
+							<outputFolder>src/test/resources/featuresNew</outputFolder>
+							<!--Optional - all features downloaded by default - should be a valid JQL-->
+							<!--jql>project = XX AND key in ('XXX-1')</jql-->
+							<!--Optional - default automated (can be one of: manual/automated/both)-->
+							<mode>automated</mode>
+						</configuration>
+						<id>features</id>
+						<goals>
+							<goal>features</goal>
+						</goals>
+						<phase>pre-integration-test</phase>
+						<!--phase>generate-test-resources</phase-->
+					</execution>
+					<execution>
+						<id>report-results</id>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<phase>verify</phase>
+						<configuration>
+							<runName>${rp.launch}</runName>
+							<!--Optional - default ./report-->
+							<jsonReportFolder>./target</jsonReportFolder>
+							<!--Optional - default - **/*.json -->
+							<jsonReportIncludePattern>**/cucumber.json</jsonReportIncludePattern>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<!--AssertThat BDD plugin definition end-->
+		</plugins>
+	</build>
+	<!-- <plugin>
+				<groupId>net.masterthought</groupId>
+				<artifactId>maven-cucumber-reporting</artifactId>
+				<version>5.3.0</version>
+				
+				<executions>
+					<execution>
+						<id>execution</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<projectName>Smart Source</projectName>
+							<outputDirectory>${project.build.directory}/site/cucumber-reports</outputDirectory>
+							<cucumberOutput>${project.build.directory}/cucumber.json</cucumberOutput>
+							<inputDirectory>${project.build.directory}</inputDirectory>
+							<jsonFiles>
+								<param>**/*.json</param>
+							</jsonFiles>
+							<skippedFails>false</skippedFails>
+							<enableFlashCharts>false</enableFlashCharts>
+							<buildNumber>42</buildNumber>
+							<checkBuildResult>false</checkBuildResult>
+						</configuration>
+					</execution>
+				</executions>
+
+			</plugin>  
+		</plugins>
+	</build>-->
+</project>

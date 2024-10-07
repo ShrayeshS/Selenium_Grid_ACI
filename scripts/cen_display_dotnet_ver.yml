@@ -1,0 +1,5 @@
+steps:
+  - script: |
+      echo "##vso[task.setvariable variable=DOTNET_VERSION]$(dotnet --version)"    # Set pipeline variable with the installed .NET Core SDK version
+    displayName: 'Set DOTNET_VERSION variable'
+

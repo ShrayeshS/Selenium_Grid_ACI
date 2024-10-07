@@ -1,0 +1,205 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - '*'
+
+pr: 
+  branches:
+    include:
+      - '*'
+
+pool:
+  name: 'SonarQube Integration Agent Pool'
+
+variables:
+  - template: variables/application-variables.yml
+  - template: variables/acr-variables.yml
+  - template: variables/aks-variables.yml
+  - template: variables/sonarQube-variables.yml
+
+
+stages:
+- stage: PRValidation
+  displayName: 'PR Validation Stage'
+  condition: eq(variables['Build.Reason'], 'PullRequest')
+  jobs:
+    - template: jobs/cen_test_dotnet_app.yml
+
+- stage: CI
+  displayName: 'CI Stage'
+  condition: ne(variables['Build.Reason'], 'PullRequest')
+  jobs:
+    - template: jobs/cen_build_push_image.yml
+
+
+- stage: CD
+  displayName: 'CD Stage'
+  dependsOn: 
+    - PRValidation
+    - CI
+  condition: |
+      and(
+      eq(dependencies.PRValidation.result, 'Skipped'),
+      eq(dependencies.CI.result, 'Succeeded'),
+      ne(variables['Build.Reason'], 'PullRequest')
+      )
+  jobs:
+      - template: jobs/cen_deploy_to_aks.yml
+        parameters:
+          AKS_RG:  ${{ variables.AKS_RG }}
+          K8S_CLUSTER:  ${{ variables.K8S_CLUSTER }}
+          SUBSCRIPTION_SC:  ${{ variables.SUBSCRIPTION_SC }}
+          ACR_SC:  ${{ variables.ACR_SC }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

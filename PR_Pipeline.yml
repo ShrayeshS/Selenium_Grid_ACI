@@ -1,0 +1,39 @@
+# azure-pipelines.yml
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - '*'
+
+pr: 
+  branches:
+    include:
+      - '*'
+
+stages:
+- stage: PRValidation
+  displayName: 'PR Validation Stagess'
+  condition: eq(variables['Build.Reason'], 'PullRequest')
+  jobs:
+    - job: PRValidationJob
+      displayName: 'PR Validation Job'
+      steps:
+        # Add steps for PR validation such as code analysis, unit tests, etc.
+        - script: |
+            echo "This is recently merged"
+            echo "$(Build.Reason)"
+
+- stage: CI
+  displayName: 'Continuous Integration Stage'
+  condition: ne(variables['Build.Reason'], 'PullRequest')
+  jobs:
+    - job: CIJob
+      displayName: 'CI Job'
+      steps:
+        # Add your build and test steps here
+        - script: |
+            echo "This is recently merged"
+            echo "$(Build.Reason)"

@@ -1,0 +1,20 @@
+trigger: 
+- main
+
+variables:
+- name: BuildConfiguration
+  value: 'Release'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+
+ - stage: Run
+   displayName: 'Dotnet Run'
+   - task: UseDotNet@2
+     inputs:
+       version: '8.x'
+       includePreviewVersions: true
+   - script: cd HelloWorldApp && dotnet run --configuration $(BuildConfiguration)
+     displayName: 'Run the application'

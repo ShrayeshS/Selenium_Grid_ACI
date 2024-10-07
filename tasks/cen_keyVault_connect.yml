@@ -1,0 +1,12 @@
+# Azure Key Vault allows you to securely store and manage keys, secrets & Certificates. 
+# This template allows to connect the DevOps Pipeline to the Azure Vault.
+
+
+steps:
+  - task: AzureKeyVault@2
+    inputs:
+      azureSubscription: 'ARGOCD_CONNECTION-dxo' # Service connection for the Azure subscription containing the Azure Key Vault instance
+      KeyVaultName: 'DXOKeyVault' # Name of the Azure Key Vault instance
+      SecretsFilter: 'TENANTID, AZCLIUNAME, AZCLIPWD, SUBSCRIPTION, SMTP-USERNAME, SMTP-PASSWORD' # The secrets that need to be downloaded. '*' indicates all secrets
+      RunAsPreJob: false # Runs the task before the job execution begins. Exposes secrets to all tasks in the job, not just tasks that follow this one.
+

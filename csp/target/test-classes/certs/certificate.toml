@@ -1,0 +1,25 @@
+defaultEntryPoints = ["http", "https"]
+
+[web]
+address = ":8080"
+
+[entryPoints]
+
+[entryPoints.http]
+address = ":80"
+
+[entryPoints.https]
+address = ":443"
+
+[entryPoints.https.tls]
+
+[[tls.certificates]] #first certificate
+  certFile = "/certs/cert.pem"
+  keyFile = "/certs/key.pem"
+   
+[tls.stores]
+  [tls.stores.default]
+   [tls.stores.default.defaultCertificate]
+  certFile = "/certs/cert.pem"
+  keyFile = "/certs/key.pem"
+

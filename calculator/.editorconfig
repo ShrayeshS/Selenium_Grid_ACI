@@ -1,0 +1,27 @@
+# Remove the line below if you want to inherit .editorconfig settings from higher directories
+root = true
+
+# C# files
+[*.cs]
+
+# Here we set all microsoft's IDExxxx rule violations as compile errors
+# https://learn.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/
+dotnet_analyzer_diagnostic.category-Style.severity = error
+
+# Here we set some rules for unused codes (classes, methods, parameters, etc.)
+dotnet_diagnostic.CA1801.severity = error # Review unused parameters
+dotnet_diagnostic.CA1804.severity = error # Remove unused locals
+dotnet_diagnostic.CA1811.severity = error # Avoid uncalled private code
+dotnet_diagnostic.CA1823.severity = error # Avoid unused private fields
+
+dotnet_diagnostic.IDE0270.severity = silent # Simplify null check
+dotnet_diagnostic.CS8602.severity = silent # Simplify null check
+dotnet_diagnostic.CS8618.severity = silent
+
+
+
+
+
+
+
+

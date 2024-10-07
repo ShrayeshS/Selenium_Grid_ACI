@@ -1,0 +1,22 @@
+parameters:
+  - name: stageName
+    type: string
+    default: ''
+  - name: condition
+    type: string
+    default: ''
+  - name: dependsOn
+    type: object
+    default: []
+  - name: DsoDevSecOps
+    type: string
+    default: ''
+  - name: sonarQubeRunAnalysis
+    type: string
+    default: ''
+
+stages:
+ - stage: ${{ parameters.stageName }}              # Define a stage based on input parameter 'stageName'
+   condition: ${{ parameters.condition }}           # Specify a condition for the stage based on input parameter 'condition'
+   jobs:
+    - template: ../jobs/cen_build_push_image.yml    # Use a job template to build and push an image with specified configurations

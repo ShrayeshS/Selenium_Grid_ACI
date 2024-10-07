@@ -1,0 +1,20 @@
+steps:
+  - script: |
+          sudo az login --service-principal -u $(AZCLIUNAME) -p $(AZCLIPWD) --tenant $(TENANTID)  # Authenticate using service principal credentials
+          sudo az account set --subscription $(SUBSCRIPTION)                                       # Set the Azure subscription context
+          sudo az acr login --name $(ACRNAME) --resource-group $(ACRRG)                            # Login to Azure Container Registry
+          sudo docker build -t $(ACRNAME).azurecr.io/$(REPO_NAME):latest .                         # Build Docker image with specified tag
+          sudo docker push $(ACRNAME).azurecr.io/$(REPO_NAME)                                      # Push the built Docker image to Azure Container Registry
+    displayName: 'Build Docker Imge'
+
+
+
+
+
+
+
+
+
+
+
+

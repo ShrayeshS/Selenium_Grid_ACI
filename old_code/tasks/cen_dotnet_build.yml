@@ -1,0 +1,9 @@
+parameters:
+- name: buildConfiguration
+  default: 'Release'
+
+
+steps:
+
+- script: dotnet build --configuration ${{ parameters.buildConfiguration }}
+  displayName: 'dotnet build ${{ parameters.buildConfiguration }}'

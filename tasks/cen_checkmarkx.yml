@@ -1,0 +1,14 @@
+steps:
+  - task: Application security testing@2023             # Execute application security testing task using Checkmarx
+    displayName: 'Running Checkmarkx'                    # Display name for the Checkmarx scan task
+    inputs:
+      projectName: ${{ variables.projectName }}         # Specify the project name for scanning
+      enableProxy: false                                 # Disable proxy settings for the scan
+      enableSastScan: true                                 # Enable Static Application Security Testing (SAST) scan
+      CheckmarxService: ${{ variables.CheckmarxService }}  # Select the Checkmarx service to use
+      preset: 'OWASP TOP 10 - 2021'                        # Choose OWASP Top 10 preset for scanning
+      incScan: false                                        # Disable incremental scan feature
+      generatePDFReport: true                                 # Generate a PDF report after the scan
+      enableDependencyScan: true                               # Enable dependency scanning during the analysis
+      dependencyServerURL: ${{ variables.dependencyServerURL }} # Specify the URL for dependency scanning server
+      includeSource: true                                        # Include source code in the scan process

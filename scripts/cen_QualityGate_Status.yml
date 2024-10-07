@@ -1,0 +1,72 @@
+steps:
+  - script : |
+          qualityGateStatus=$(curl -u $(SONAR_TOKEN): "$(DXO_SonarQube)api/qualitygates/project_status?projectKey=$(DSO-DevSecOps)")                                  # Retrieve the quality gate status from SonarQube API using the provided credentials
+          
+          curl -u $(SONAR_TOKEN): "$(DXO_SonarQube)api/qualitygates/project_status?projectKey=$(DSO-DevSecOps)" > output.json
+          #jq -r '.projectStatus.conditions[] | [.metricKey, .status, .actualValue, .comparator, .errorThreshold] | @csv' output.json > output.csv
+
+          
+          #(echo -e "Metric Key\t\tStatus\t\tActual Value\t\tComparator\t\tError Threshold"; jq -r '.projectStatus.conditions[] | [.metricKey, .status, .actualValue, .comparator, .errorThreshold] | @tsv' output.json) | awk 'BEGIN {FS="\t"; printf "%-20s%-10s%-15s%-15s%-15s\n", "Metric Key", "Status", "Actual Value", "Comparator", "Error Threshold"} {printf "%-20s%-10s%-15s%-15s%-15s\n", $1, $2, $3, $4, $5}' > output.tsv
+          echo "Quality Gate Status Data:"
+          #(echo -e "Metric Key\tStatus\tActual Value\tComparator\tError Threshold"; jq -r '.projectStatus.conditions[] | [.metricKey, .status, .actualValue, .comparator, .errorThreshold] | map(. + "\t") | join("")' output.json) > output.tsv
+          #awk 'BEGIN {FS="\t"; OFS="\t"; printf "%-20s%-15s%-25s%-10s%-15s\n", "Cdddddddddddddddddddddddddd", "Column 2 Header", "Column 3 Header", "Column 4 Header", "Column 5 Header"} {printf "%-20s%-15s%-25s%-10s%-15s\n", $1, $2, $3, $4, $5}' output.tsv
+          #(echo -e "|Metric Key|Status|Actual Value|Comparator|Error Threshold|\n"; jq -r '.projectStatus.conditions[] | ["|", .metricKey, "|", .status, "|", .actualValue, "|", .comparator,"|", .errorThreshold," |\n"] | @tsv' output.json) > output.tsv
+          #!/bin/bash
+
+          # Define the input JSON file
+          input_file="output.json"
+
+          # Extract relevant fields using jq and format into TSV with headers
+          #current_date=$(date '+%Y-%m-%d %H:%M')
+          build_id=$(Build.BuildNumber)
+          build_id_formatted=$(echo $build_id | tr '.' '_')
+          status_file="sonar_status_build--${build_id_formatted}.txt"
+
+          echo -e "Status\tMetric Key\tComparator\tError Threshold\tActual Value" > output.tsv
+          jq -r '.projectStatus.conditions[] | [.status,   .metricKey, .comparator, .errorThreshold, .actualValue] | @tsv' "$input_file" >> output.tsv
+          column -ts$'\t' output.tsv >"${status_file}"
+          
+          table_data=$(echo "$qualityGateStatus" | jq -r '.projectStatus.conditions[] | [.status, .metricKey, .comparator, .errorThreshold, .actualValue] | @tsv')     # Extract table data for status, metric key, comparator, error threshold, and actual value using jq
+          
+          echo -e "Status\tMetric Key\tComparator\tError Threshold\tActual Value" | awk '{printf "%-10s%-40s%-20s%-15s%-12s\n", $1, $2, $3, $4, $5}'     # Display a formatted header for the data table
+          echo 
+
+          while IFS=$'\t' read -r status metricKey comparator errorThreshold actualValue; do                                 # Iterate through each row of data and display it in a formatted table format
+            printf "%-10s%-40s%-20s%-15s%-12s\n" "$status" "$metricKey" "$comparator" "$errorThreshold" "$actualValue"
+            echo  
+          done <<< "$table_data"
+         
+          statusValue=$(echo "$qualityGateStatus" | jq -r '.projectStatus.status')                               # Get the overall status value of the quality gate result
+          echo "Quality Gate Status : $statusValue"
+
+          if [ "$statusValue" != "OK" ]; then
+              echo "Sonarqube Quality Gate not passed"
+              #status_file="sonar_status_${current_date}.txt"
+
+              FILE_CONTENT=$(base64 "$status_file")
+              FILE_NAME=$(basename "$status_file")
+
+              SMTP_SERVER="smtp-us.ser.proofpoint.com"
+              SMTP_PORT=587
+              FROM="noreply@cencora.com"
+              TO="Shweta.Pachbhai@cencora.com"
+              #TO="shrayesh.sreenivasan@cencora.com"
+              SUBJECT="SonarQube Quality gate failed"
+
+              #Prepare email message
+              EMAIL_MESSAGE=$(echo -e "From: $FROM\r\nTo: $TO\r\nSubject: $SUBJECT\r\nContent-Type: multipart/mixed; boundary=boundary123\r\n\r\n--boundary123")
+              EMAIL_MESSAGE+="\r\n--boundary123\r\nContent-Type: application/octet-stream; name=\"$FILE_NAME\"\r\nContent-Disposition: attachment; filename=\"$FILE_NAME\"\r\nContent-Transfer-Encoding: base64\r\n\r\n$FILE_CONTENT"
+              EMAIL_MESSAGE+="\r\n--boundary123--"
+              
+              #Send email
+              curl --url "smtp://$SMTP_SERVER:$SMTP_PORT" --ssl-reqd \
+                --mail-from "$FROM" --mail-rcpt "$TO" \
+                --user "$(SMTP-USERNAME):$(SMTP-PASSWORD)" \
+                --upload-file - <<<$(echo -e "$EMAIL_MESSAGE")
+
+              echo "Email sent successfully."
+              exit 1
+
+          else
+            echo "Sonarqube Quality Gate passed. Continuing with other tasks."
+          fi
